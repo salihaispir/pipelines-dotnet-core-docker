@@ -14,6 +14,8 @@ variables:
   imageRepository: 'salihaispirpipelinesdotnetcoredocker'
   containerRegistry: 'dockerpipelinesacr.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
+  dockerId: dockerpipelinesacr
+  imageName: salihaispirpipelinesdotnetcoredocker
   tag: '$(Build.BuildId)'
   
   # Agent VM image name
@@ -26,8 +28,15 @@ stages:
   - job: Build
     displayName: Build
     pool:
-      vmImage: $(vmImageName)
+      vmImage: 'ubuntu-16.04' 
+      # other options: 'macOS-10.13', 'vs2017-win2016' 
+      #$(vmImageName)
     steps:
+    - script: |
+        docker build -t dockerpipelinesacr/salihaispirpipelinesdotnetcoredocker .
+        docker login -u dockerpipelinesacr -p Jlos=4wDQYQFPukTZnXC6CkF9E8Og+Mz
+        docker push dockerpipelinesacr/salihaispirpipelinesdotnetcoredocker
+      # add options to this command to meet your needs
     - task: Docker@2
       displayName: Build and push an image to container registry
       inputs:
